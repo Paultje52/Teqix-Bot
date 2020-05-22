@@ -1,0 +1,31 @@
+{
+  "token": "NjI2NzI4MzQ5MDk5NjIyNDI5.XqFSzQ.5zKPXSY8ezZpEZCOi3NDImcWVks",
+  "prefix": "*",
+  "authorSettings": {
+    "spelpunten": 0,
+    "warns": [],
+    "mutes": [],
+    "kicks": [],
+    "bans": [],
+    "note": "",
+    "cookies": {
+      "amount": 5,
+      "achievements": [],
+      "shorterDelay": false,
+      "securityUntil": 0,
+      "cookieMasterCount": 0,
+      "odds": {
+        "eat": 25,
+        "steal": 25
+      },
+      "delays": {
+        "eat": 0,
+        "crate": 0,
+        "steal": 0
+      }
+    }
+  },
+  "channels": {
+    "modlogs": "tmp-modlogs"
+  }
+}

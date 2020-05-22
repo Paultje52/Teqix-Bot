@@ -1,0 +1,39 @@
+{
+  "name": "cn-bot",
+  "version": "2.0.0",
+  "description": "De Officiele CN-Community discord bot!",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js -e js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paultje52/CN-Bot.git"
+  },
+  "keywords": [
+    "bot",
+    "cn-community",
+    "discord"
+  ],
+  "author": "Paultje52",
+  "contributors": [
+    "Paultje52",
+    "770grappenmaker",
+    "25huizengek1"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Paultje52/CN-Bot/issues"
+  },
+  "homepage": "https://github.com/Paultje52/CN-Bot#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "fsscanner": "^1.0.23",
+    "json-config-store": "0.0.1",
+    "moment": "^2.25.3",
+    "request": "^2.88.2",
+    "sqlite3": "^4.2.0",
+    "ytdl-core": "^2.1.2"
+  }
+}
