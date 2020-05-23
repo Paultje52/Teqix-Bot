@@ -1,6 +1,6 @@
 {
   "token": "TOKEN",
-  "prefix": "*",
+  "prefix": "!",
   "authorSettings": {
     "spelpunten": 0,
     "warns": [],
@@ -26,6 +26,6 @@
     }
   },
   "channels": {
-    "modlogs": "tmp-modlogs"
+    "modlogs": "🗂➤mod_logs"
   }
 }
