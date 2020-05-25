@@ -70,7 +70,7 @@ client.on("message", async (message) => {
     return new discord.MessageEmbed()
       .setColor("#2f3136")
       .setTimestamp()
-      .setFooter("© CN Community");
+      .setFooter("© Teqix Community");
       // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://cncommunity.nl/");
   };
   // Menu functie
