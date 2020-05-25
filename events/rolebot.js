@@ -12,7 +12,7 @@ module.exports = class RoleBot {
       { emoji: "💻", name: "Developer Tag" },
       { emoji: "🎉", name: "Giveaway Tag" },
     ];
-    this.guildName = "cn community";
+    this.guildName = "teqix community";
   }
 
   async run(event) {
@@ -80,7 +80,7 @@ module.exports = class RoleBot {
       return;
     }
     const guild = client.guilds.cache.find((g) =>
-      g.name.toLowerCase().includes("cn community")
+      g.name.toLowerCase().includes("teqix community")
     );
     if (!guild) return;
     const channel = guild.channels.cache.find((ch) =>

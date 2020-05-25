@@ -1,18 +1,18 @@
 {
-  "name": "cn-bot",
+  "name": "teqix-bot",
   "version": "2.0.0",
-  "description": "De Officiele CN-Community discord bot!",
+  "description": "Dé beste Discord bot door het beste developers team!",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js -e js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Paultje52/CN-Bot.git"
+    "url": "git+https://github.com/Paultje52/Teqix-Bot.git"
   },
   "keywords": [
     "bot",
-    "cn-community",
+    "teqix-community",
     "discord"
   ],
   "author": "Paultje52",
@@ -23,9 +23,9 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Paultje52/CN-Bot/issues"
+    "url": "https://github.com/Paultje52/Teqix-Bot/issues"
   },
-  "homepage": "https://github.com/Paultje52/CN-Bot#readme",
+  "homepage": "https://github.com/Paultje52/Teqix-Bot#readme",
   "dependencies": {
     "discord.js": "^12.2.0",
     "fluent-ffmpeg": "^2.1.2",

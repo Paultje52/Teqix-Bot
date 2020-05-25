@@ -70,8 +70,8 @@ client.on("message", async (message) => {
     return new discord.MessageEmbed()
       .setColor("#2f3136")
       .setTimestamp()
-      .setFooter("© CN Community");
-      // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://cncommunity.nl/");
+      .setFooter("© Teqix Community");
+      // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
   };
   // Menu functie
   message.menu = require("./util/menu.js");
