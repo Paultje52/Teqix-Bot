@@ -3,7 +3,7 @@ const moment = require("moment");
 module.exports = class RoleBot {
   constructor(client) {
     this.client = client;
-    this.name = "raw";
+    this.help = { name: "raw" };
     this.channelName = "rollen";
     this.emojis = [
       { emoji: "🎮", name: "Spellen Tag" },
@@ -16,14 +16,14 @@ module.exports = class RoleBot {
   }
 
   async run(event) {
-      return;
+    return;
     let client = this.client;
 
     if (event.t == "READY") {
       setTimeout(async () => {
         console.log(
           `[INFO] ${
-            moment().format("HH:mm")
+          moment().format("HH:mm")
           } De rolebot is nu geladen en actief!`,
         );
         const client = this.client;

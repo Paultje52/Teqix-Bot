@@ -5,7 +5,7 @@ module.exports = class WouldYouRather {
             name: "messageReactionAdd"
         }
     }
-    async run(reaction, user) {
+    async run(client, reaction, user) {
         let guild = reaction.message.guild;
         let member = guild.members.cache.get(user.id)
         if (!reaction.message.channel.name.includes("would-you-rather") || member.roles.cache.find(r => r.name.includes("Staff"))) return;

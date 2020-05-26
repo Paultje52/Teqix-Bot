@@ -26,6 +26,7 @@ client.cache = new (require("./util/cacheManager.js"))();
 // Ready event
 client.on("ready", async () => {
   await db.isReady();
+
   // Spellen laden
   fsscanner.scan(path.join(__dirname, "/spellen"), [fsscanner.criteria.pattern(".js"), fsscanner.criteria.type("F")], (err, files) => {
     // Load alle files, en delete require cache
@@ -48,17 +49,19 @@ client.on("ready", async () => {
     }
     console.log(`${client.user.username} is nu online, ${files.length} commands succesvol geladen.`);
   });
-  
-  // Load event, ZONDER require cache
-  fsscanner.scan(path.join(__dirname, "/events"), [fsscanner.criteria.pattern(".js"), fsscanner.criteria.type("F")], (err, files) => {
-    // Load alle files, en delete require cache
-    if (err) throw err;
-    for (let i = 0; i < files.length; i++) {
-      const event = new (require(files[i]))(client);
-      if (event.name === "message") event.name = "cnMessage";
-      client.on(event.name, event.run);
-    }
-  });
+});
+
+// Load event, ZONDER require cache
+fsscanner.scan(path.join(__dirname, "/events"), [fsscanner.criteria.pattern(".js"), fsscanner.criteria.type("F")], (err, files) => {
+  // Load alle files, en delete require cache
+  if (err) throw err;
+  for (let i = 0; i < files.length; i++) {
+    const event = new (require(files[i]))(client);
+    if (event.name === "message") event.name = "cnMessage";
+    client.on(event.help.name, (...args) => {
+      event.run(client, ...args)
+    });
+  }
 });
 
 client.on("message", async (message) => {
@@ -71,7 +74,7 @@ client.on("message", async (message) => {
       .setColor("#2f3136")
       .setTimestamp()
       .setFooter("© Teqix Community");
-      // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
+    // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
   };
   // Menu functie
   message.menu = require("./util/menu.js");
@@ -89,8 +92,8 @@ client.on("message", async (message) => {
   // Member addons
   message.member = require("./util/memberAddons.js")(message);
   message.getMember = (string) => {
-    return message.mentions.members.first() 
-      || message.guild.cache.members.get(string) 
+    return message.mentions.members.first()
+      || message.guild.cache.members.get(string)
       || message.guild.cache.members.find(m => m.user.username.toLowerCase().includes(string));
   }
 

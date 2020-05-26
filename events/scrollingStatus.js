@@ -1,19 +1,20 @@
-module.exports = class WouldYouRather {
+module.exports = class Status {
     constructor(client) {
         this.client = client;
         this.help = {
             name: "ready"
         }
     }
-    async run() {
+    async run(client) {
         // Scrolling statussen
         let statusses = [{ text: "Teqix Community", type: "WATCHING" }]
         let i = setInterval(() => {
             let random = statusses[Math.floor(Math.random() * statusses.length)];
-            this.client.user.setActivity(random.text, { type: random.type })
+            client.user.setActivity(random.text, { type: random.type })
                 .catch(error => {
                     console.error(error);
                     clearInterval(i);
+                    console.log(3);
                 });
         }, 10e3);
 
