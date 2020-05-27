@@ -51,7 +51,7 @@ module.exports = class Command {
 			});
 			message.channel.send(message.embed()
 				.setTitle(this.help.name)
-				.setDescription(`${invalid.length} argument(en) zijn onjuist!\n- ${missingArgs.join("\n- ")}\n\n_Voorbeeld: ||${client.config.prefix}${examples[Math.floor(Math.random() * examples.length)].replace("<cmd>", this.help.name)}||_`)
+				.setDescription(`${invalid.length} argument(en) zijn onjuist!\n- ${missingArgs.join("\n- ")}\n\n_Voorbeeld: \`${client.config.prefix}${examples[Math.floor(Math.random() * examples.length)].replace("<cmd>", this.help.name)}\`_`)
 			);
 			return false;
 		}
