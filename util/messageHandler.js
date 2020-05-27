@@ -7,9 +7,10 @@ module.exports = async (message) => {
     // Custom embed
     message.embed = () => {
       return new discord.MessageEmbed()
-        .setColor("#2f3136")
+        .setColor("#0062ff") // #2f3136
         .setTimestamp()
-        .setFooter("© Teqix Community");
+        .setFooter("© Teqix Community")
+        .setThumbnail("https://images-ext-2.discordapp.net/external/vHksXugqFF9PV7jEK2K-gGOsutF9OTTzvBBXk4kRDBM/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/701449659423653905/8799003b26cb621e1dad18982b490e9b.png");
       // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
     };
     // Menu functie
