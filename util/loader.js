@@ -1,5 +1,6 @@
 const path = require("path");
 const fsscanner = require("fsscanner");
+const chalk = require("chalk");
 
 module.exports = function loader(dir, callback) {
   return new Promise((res, rej) => {
@@ -10,7 +11,7 @@ module.exports = function loader(dir, callback) {
         await callback(require(files[i]), files[i]);
         delete require.cache[require.resolve(files[i])];
       }
-      console.log(`${files.length} ${dir.split("/")[dir.split("/").length-1]} succesvol geladen.`);
+      console.log(`${chalk.magenta(files.length)} ${chalk.magenta(dir.split("/")[dir.split("/").length-1])} succesvol geladen.`);
       res(files.length);
     });
   });

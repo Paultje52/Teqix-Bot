@@ -1,9 +1,8 @@
-console.log("Bot opstarten!");
+const chalk = require("chalk");
+console.log(chalk.blue("Bot opstarten..."));
 const autoReload = require("./util/autoReload.js");
 
 const discord = require("discord.js");
-const fsscanner = require("fsscanner");
-const path = require("path");
 let loader = require("./util/loader.js");
 let config = new autoReload(__dirname, "config.json").onChange((c) => config = c).getFile();
 
@@ -25,7 +24,7 @@ let db = new (require("./database.js"))({
   development: true
 });
 db.isReady().then(() => {
-  console.log("Database is ready!");
+  console.log(chalk.greenBright("Database is ready!"));
 });
 client.db = db;
 client.cache = new (require("./util/cacheManager.js"))();
@@ -39,7 +38,7 @@ client.on("ready", async () => {
     new file(client);
     new autoReload(path).isClass().onChange((f) => {
       let spel = new f(client);
-      console.log(`Spel ${spel.name} is herladen!`);
+      console.log(chalk.cyan(`Spel ${spel.name} is herladen!`));
     });
   });
 
@@ -50,12 +49,12 @@ client.on("ready", async () => {
     new autoReload(path).isClass().onChange((f) => {
       command = new f(client);
       commands.set(command.help.name, command);
-      console.log(`Command ${command.help.name} is herladen!`);
+      console.log(chalk.cyan(`Command ${command.help.name} is herladen!`));
     });
   });
   
   // Events laden
-  loader("/events", (file, path) => {
+  await loader("/events", (file, path) => {
     let event = new file(client);
     if (event.name === "msg") event.name = "TeqixMessage";
     if (event.name === "ready") event.run();
@@ -66,12 +65,16 @@ client.on("ready", async () => {
       event = new f(client);
       if (event.name === "msg") event.name = "TeqixMessage";
       if (event.name === "ready") {
-        return console.log(`Om de verandering van ${path.split("events")[1]} actief te maken, zal de bot opnieuw moeten opstarten!`);
+        return console.log(chalk.keyword("orange")(`Om de verandering van ${path.split("events")[1]} actief te maken, zal de bot opnieuw moeten opstarten!`));
       }
       client.on(event.name, event.run);
-      console.log(`Event ${path.split("events")[1]} is herladen!`);
+      console.log(chalk.cyan(`Event ${path.split("events")[1]} is herladen!`));
     });
   });
+
+
+  // Bot is online!
+  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\n`);
 });
 
 client.on("message", async (message) => {

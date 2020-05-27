@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/Paultje52/Teqix-Bot#readme",
   "dependencies": {
+    "chalk": "^4.0.0",
     "discord.js": "^12.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "fsscanner": "^1.0.23",
