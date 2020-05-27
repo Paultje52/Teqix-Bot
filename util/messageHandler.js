@@ -1,51 +1,54 @@
 const discord = require("discord.js");
 
 module.exports = async (message) => {
-    // Handle alle commands
-    if (message.author.bot) return;
+  // Handle alle commands
+  if (message.author.bot) return;
 
-    // Custom embed
-    message.embed = () => {
-      return new discord.MessageEmbed()
-        .setColor("#0062ff") // #2f3136
-        .setTimestamp()
-        .setFooter("© Teqix Community")
-        .setThumbnail("https://images-ext-2.discordapp.net/external/vHksXugqFF9PV7jEK2K-gGOsutF9OTTzvBBXk4kRDBM/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/701449659423653905/8799003b26cb621e1dad18982b490e9b.png");
-      // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
-    };
-    // Menu functie
-    message.menu = require("./menu.js");
-    // Error report functie
-    message.error = require("./messageError.js")(message, global.client);
-    // Database gedoe voor de author
-    if (!message.author.settings) {
-      message.author.settings = await global.client.db.get(`author-${message.author.id}`);
-      if (!message.author.settings) message.author.settings = global.client.config.authorSettings;
-    }
-    message.author.updateDatabase = () => {
-      return global.client.db.set(`author-${message.author.id}`, message.author.settings);
-    }
-  
-    // Member addons
-    message.member = require("./memberAddons.js")(message);
-    message.getMember = (string) => {
-      return message.mentions.members.first()
-        || message.guild.cache.members.get(string)
-        || message.guild.cache.members.find(m => m.user.username.toLowerCase().includes(string));
-    }
-  
-    // CNMessage functie
-    global.client.emit("TeqixMessage", message);
-  
-    // Spellen handler
+  // Custom embed
+  message.embed = () => {
+    return new discord.MessageEmbed()
+      .setColor("#0062ff") // #2f3136
+      .setTimestamp()
+      .setFooter("© Teqix Community")
+      .setThumbnail("https://images-ext-2.discordapp.net/external/vHksXugqFF9PV7jEK2K-gGOsutF9OTTzvBBXk4kRDBM/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/701449659423653905/8799003b26cb621e1dad18982b490e9b.png");
+    // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
+  };
+  // Menu functie
+  message.menu = require("./menu.js");
+  // Error report functie
+  message.error = require("./messageError.js")(message, global.client);
+  // Database gedoe voor de author
+  if (!message.author.settings) {
+    message.author.settings = await global.client.db.get(`author-${message.author.id}`);
+    if (!message.author.settings) message.author.settings = global.client.config.authorSettings;
+  }
+  message.author.updateDatabase = () => {
+    return global.client.db.set(`author-${message.author.id}`, message.author.settings);
+  }
+
+  // Member addons
+  message.member = require("./memberAddons.js")(message);
+  message.getMember = (string) => {
+    return message.mentions.members.first()
+      || message.guild.cache.members.get(string)
+      || message.guild.cache.members.find(m => m.user.username.toLowerCase().includes(string));
+  }
+
+  // CNMessage functie
+  global.client.emit("TeqixMessage", message);
+
+  // Spellen handler
+  setTimeout(() => { // Op andere thread runnen
     if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("developer")) { // TODO: "developer" moet "gameroom" worden!
       // Dit is mogelijk een spel, dus gaan we de spellen constructor callen
       require("./spel.js").event(global.client, message);
       delete require.cache[require.resolve("./spel.js")];
     }
-  
-  
-    // Command handler
+  });
+
+
+  // Command handler
+  setTimeout(() => { // Op andere thread runnen
     if (!message.content.startsWith(global.client.config.prefix)) return;
     const args = message.content.slice(global.client.config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
@@ -83,4 +86,5 @@ module.exports = async (message) => {
         .addField("**__Informatie__**", `**Message**\n\`\`\`${message.content}\`\`\`\n**Timestamp:** \`${Date.now()}\`\n**Channel:** ${message.channel}\n**Author:** ${message.author}\n**Link** [Klik hier](https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`)
       );
     });
+  });
 }
