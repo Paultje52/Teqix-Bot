@@ -3,7 +3,7 @@ const moment = require("moment");
 module.exports = class RoleBot {
   constructor(client) {
     this.client = client;
-    this.help = { name: "raw" };
+    this.name = "raw";
     this.channelName = "rollen";
     this.emojis = [
       { emoji: "🎮", name: "Spellen Tag" },
