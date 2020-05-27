@@ -5,7 +5,8 @@ module.exports = class DataBase {
         cwd: cwd,
         configName: `${name}.json`
       });
-      this.database.isReady = () => true;
+      this.database.isReady = () => new Promise((res) => res());
+      return this.database;
     }
     this.memory = {};
     this.ready = false;
