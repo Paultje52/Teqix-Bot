@@ -34,7 +34,7 @@ client.on("ready", async () => {
   await db.isReady();
 
   // Spellen laden
-  await loader("/spellen", (file, path) => {
+  let spellen = await loader("/spellen", (file, path) => {
     new file(client);
     new autoReload(path).isClass().onChange((f) => {
       let spel = new f(client);
@@ -43,7 +43,7 @@ client.on("ready", async () => {
   });
 
   // Commands laden
-  await loader("/commands", (file, path) => {
+  let cmds = await loader("/commands", (file, path) => {
     let command = new file(client);
     commands.set(command.help.name, command);
     new autoReload(path).isClass().onChange((f) => {
@@ -54,7 +54,7 @@ client.on("ready", async () => {
   });
   
   // Events laden
-  await loader("/events", (file, path) => {
+  let events = await loader("/events", (file, path) => {
     let event = new file(client);
     if (event.name === "msg") event.name = "TeqixMessage";
     if (event.name === "ready") event.run();
@@ -74,7 +74,7 @@ client.on("ready", async () => {
 
 
   // Bot is online!
-  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\n`);
+  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(cmds)} commands, ${chalk.red(spellen)} spellen en ${chalk.red(events)} events!`);
 });
 
 client.on("message", async (message) => {
