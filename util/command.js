@@ -45,15 +45,28 @@ module.exports = class Command {
 				});
 			};
 			if (invalid.length === 0) return true;
-			let missingArgs = [];
-			invalid.forEach(arg => {
-				missingArgs.push(`Argument ${arg.num}: **${name}**`);
-			});
-			message.channel.send(message.embed()
-				.setTitle(this.help.name)
-				.setDescription(`${invalid.length} argument(en) zijn onjuist!\n- ${missingArgs.join("\n- ")}\n\n_Voorbeeld: \`${client.config.prefix}${examples[Math.floor(Math.random() * examples.length)].replace("<cmd>", this.help.name)}\`_`)
+			else if (invalid.length === 1) {
+				message.channel.send(message.embed()
+					.setTitle(toTitleCase(this.help.name))
+					.setDescription(`Het ${invalid[0].num}e argument (**${invalid[0].name}**) is onjuist!\n\n_Voorbeeld:_ **${client.config.prefix}${examples[Math.floor(Math.random() * examples.length)].replace("<cmd>", this.help.name)}**`)
+				);
+			} else {
+				let missingArgs = [];
+				invalid.forEach(arg => {
+					missingArgs.push(`Argument ${arg.num}: **${arg.name}**`);
+				});
+				message.channel.send(message.embed()
+				.setTitle(toTitleCase(this.help.name))
+				.setDescription(`${invalid.length} argumenten zijn onjuist!\n- ${missingArgs.join("\n- ")}\n\n_Voorbeeld:_ **${client.config.prefix}${examples[Math.floor(Math.random() * examples.length)].replace("<cmd>", this.help.name)}**`)
 			);
+			}
 			return false;
 		}
 	}
+}
+
+function toTitleCase(string) {
+  return string.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 }
