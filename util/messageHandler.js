@@ -1,3 +1,5 @@
+const discord = require("discord.js");
+
 module.exports = async (message) => {
     // Handle alle commands
     if (message.author.bot) return;
