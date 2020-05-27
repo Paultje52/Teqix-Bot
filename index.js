@@ -1,14 +1,19 @@
 console.log("Bot opstarten!");
-const fsscanner = require("fsscanner")
-const discord = require("discord.js");
-const path = require("path")
-const config = require("./config.json");
+const autoReload = require("./util/autoReload.js");
 
-// Commands
+const discord = require("discord.js");
+const fsscanner = require("fsscanner");
+const path = require("path");
+let loader = require("./util/loader.js");
+let config = new autoReload(__dirname, "config.json").onChange((c) => config = c).getFile();
+
+// Client
 const client = new discord.Client();
 client.login(config.token);
 client.config = config;
 global.client = client;
+
+// Commands
 const commands = new discord.Collection();
 client.commands = commands;
 client.prefix = config.prefix;
@@ -30,40 +35,43 @@ client.on("ready", async () => {
   await db.isReady();
 
   // Spellen laden
-  fsscanner.scan(path.join(__dirname, "/spellen"), [fsscanner.criteria.pattern(".js"), fsscanner.criteria.type("F")], (err, files) => {
-    // Load alle files, en delete require cache
-    if (err) throw err;
-    for (let i = 0; i < files.length; i++) {
-      new (require(files[i]))(client);
-      delete require.cache[require.resolve(files[i])];
-    }
-    console.log(`${files.length} spellen succesvol geladen.`);
-  });
-
-  // Load commands, ZONDER require cache
-  fsscanner.scan(path.join(__dirname, "/commands"), [fsscanner.criteria.pattern(".js"), fsscanner.criteria.type("F")], (err, files) => {
-    // Load alle files, en delete require cache
-    if (err) throw err;
-    for (let i = 0; i < files.length; i++) {
-      const command = new (require(files[i]))(client);
-      commands.set(command.help.name, command);
-      delete require.cache[require.resolve(files[i])];
-    }
-    console.log(`${client.user.username} is nu online, ${files.length} commands succesvol geladen.`);
-  });
-});
-
-// Load event, ZONDER require cache
-fsscanner.scan(path.join(__dirname, "/events"), [fsscanner.criteria.pattern(".js"), fsscanner.criteria.type("F")], (err, files) => {
-  // Load alle files, en delete require cache
-  if (err) throw err;
-  for (let i = 0; i < files.length; i++) {
-    const event = new (require(files[i]))(client);
-    if (event.name === "message") event.name = "cnMessage";
-    client.on(event.help.name, (...args) => {
-      event.run(client, ...args)
+  await loader("/spellen", (file, path) => {
+    new file(client);
+    new autoReload(path).isClass().onChange((f) => {
+      let spel = new f(client);
+      console.log(`Spel ${spel.name} is herladen!`);
     });
-  }
+  });
+
+  // Commands laden
+  await loader("/commands", (file, path) => {
+    let command = new file(client);
+    commands.set(command.help.name, command);
+    new autoReload(path).isClass().onChange((f) => {
+      command = new f(client);
+      commands.set(command.help.name, command);
+      console.log(`Command ${command.help.name} is herladen!`);
+    });
+  });
+  
+  // Events laden
+  loader("/events", (file, path) => {
+    let event = new file(client);
+    if (event.name === "msg") event.name = "TeqixMessage";
+    if (event.name === "ready") event.run();
+    else client.on(event.name, event.run);
+    new autoReload(path).isClass().onChange((f, path) => {
+      client.removeListener(event.name, event.run);
+
+      event = new f(client);
+      if (event.name === "msg") event.name = "TeqixMessage";
+      if (event.name === "ready") {
+        return console.log(`Om de verandering van ${path.split("events")[1]} actief te maken, zal de bot opnieuw moeten opstarten!`);
+      }
+      client.on(event.name, event.run);
+      console.log(`Event ${path.split("events")[1]} is herladen!`);
+    });
+  });
 });
 
 client.on("message", async (message) => {
