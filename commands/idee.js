@@ -5,7 +5,15 @@ module.exports = class Ping extends require(`${process.cwd()}/util/command.js`) 
 			description: "Geef je idee op!",
 			dir: __dirname,
 			alias: ["idea"]
-		});
+		}, {}, {
+      cmdArgs: [{
+        name: "idee",
+        test: (_message, arg) => !!arg
+      }],
+      examples: [
+        "<cmd> Iedereen een gratis koekje geven!"
+      ]
+    });
 	}
 
 	async run(message, args) {

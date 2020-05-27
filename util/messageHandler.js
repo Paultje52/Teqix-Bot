@@ -67,6 +67,9 @@ module.exports = async (message) => {
     });
     if (missing.length > 0) return message.error(`Jij moet de volgende permissies hebben om het commando ${cmd.help.name} te gebruiken:\n- ${missing.join("\n- ")}`);
   
+    // Command args checken
+    if (!(await cmd.argsTester(message, args, client))) return;
+
     // Command uitvoeren
     cmd.run(message, args, global.client).catch(e => {
       console.log(e);

@@ -5,7 +5,16 @@ module.exports = class Ticket_Rename extends require(`${process.cwd()}/util/comm
 			description: "Hernoem een ticket!",
 			dir: __dirname,
 			alias: ["rename"]
-		});
+		}, {}, {
+      cmdArgs: [{
+        name: "Ticket naam",
+        test: (_message, arg) => !!arg
+      }],
+      examples: [
+        "<cmd> sollicitatie",
+        "<cmd> partner"
+      ]
+    });
   }
   
   async run(message, args) {

@@ -8,7 +8,7 @@ module.exports = class Help extends require(`${process.cwd()}/util/command.js`) 
 		});
 	}
 
-	async run(message, args) {
+	async run(message) {
 		let categories = new Map();
 
 		let embed = message.embed().setTitle("Help");

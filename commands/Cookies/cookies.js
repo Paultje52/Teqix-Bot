@@ -5,6 +5,11 @@ module.exports = class Cookies extends require(`${process.cwd()}/util/command.js
 			description: "Kijk hoeveel cookies je hebt!",
 			dir: __dirname,
 			alias: ["p"]
+		}, {}, {
+			examples: [
+				"<cmd> cookies",
+				"<cmd> cookies <@327462385361092621>"
+			]
 		});
 	}
 

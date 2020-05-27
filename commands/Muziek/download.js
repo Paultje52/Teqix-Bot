@@ -5,13 +5,20 @@ const { MessageAttachment } = require("discord.js");
 const ffmpeg = require("fluent-ffmpeg");
 const request = require("request");
 
-module.exports = class Download
-  extends require(`${process.cwd()}/util/command.js`) {
+module.exports = class Download extends require(`${process.cwd()}/util/command.js`) {
   constructor(client) {
     super(client, {
       name: "download",
       description: "Download muziek van youtube!",
       dir: __dirname
+    }, {}, {
+      cmdArgs: [{
+        name: "Youtube URL",
+        test: (_message, arg) => arg && arg.match(/^(https?\:\/\/)?((www\.)?youtube\.com\/watch\?v=.+|youtu\.be\/.+)/)
+      }],
+      examples: [
+        "<cmd> https://www.youtube.com/watch?v=zaIsVnmwdqg"
+      ]
     });
   }
   async run(message, args, client) {

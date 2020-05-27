@@ -13,6 +13,9 @@ module.exports = class Command {
 				bot: [],
 				user: []
 			}
+		} = {}, {
+			cmdArgs = [],
+			examples = []
 		} = {}
 	) {
 		this.client = client;
@@ -31,6 +34,26 @@ module.exports = class Command {
 			test: test,
 			minRole: minRole,
 			permissions: permissions
+		}
+		this.argsTester = async (message, args, client) => {
+			let invalid = [];
+			for (let num = 0; num < cmdArgs.length; num++) {
+				let result = await cmdArgs[num].test(message, args[num], client);
+				if (!result) invalid.push({
+					num: num+1,
+					name: cmdArgs[num].name
+				});
+			};
+			if (invalid.length === 0) return true;
+			let missingArgs = [];
+			invalid.forEach(arg => {
+				missingArgs.push(`Argument ${arg.num}: **${name}**`);
+			});
+			message.channel.send(message.embed()
+				.setTitle(this.help.name)
+				.setDescription(`${invalid.length} argument(en) zijn onjuist!\n- ${missingArgs.join("\n- ")}\n\n_Voorbeeld: ||${client.config.prefix}${examples[Math.floor(Math.random() * examples.length)].replace("<cmd>", this.help.name)}||_`)
+			);
+			return false;
 		}
 	}
 }

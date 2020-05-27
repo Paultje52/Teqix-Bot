@@ -1,4 +1,4 @@
-module.exports = class Help extends require(`${process.cwd()}/util/command.js`) {
+module.exports = class Manage extends require(`${process.cwd()}/util/command.js`) {
   constructor(client) {
     super(client, {
       name: "manage",
@@ -6,7 +6,15 @@ module.exports = class Help extends require(`${process.cwd()}/util/command.js`) 
       dir: __dirname,
       alias: ["m", "beheer"]
     }, {
-      test: (message) => message.member.isStaff()
+      // test: (message) => message.member.isStaff()
+    }, {
+      cmdArgs: [{
+        name: "member",
+        test: (message, argument) => !!(message.mentions.members.first() || message.guild.member(argument))
+      }],
+      examples: [
+        "<cmd> <@327462385361092621>"
+      ]
     });
   }
 
