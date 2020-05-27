@@ -37,7 +37,7 @@ module.exports = async (message) => {
     global.client.emit("TeqixMessage", message);
   
     // Spellen handler
-    if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("entertainment")) {
+    if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("developer")) { // TODO: "developer" moet "gameroom" worden!
       // Dit is mogelijk een spel, dus gaan we de spellen constructor callen
       require("./spel.js").event(global.client, message);
       delete require.cache[require.resolve("./spel.js")];
