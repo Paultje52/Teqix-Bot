@@ -15,8 +15,10 @@ module.exports = async (message) => {
   };
   // Menu functie
   message.menu = require("./menu.js");
+  delete require.cache[require.resolve("./menu.js")];
   // Error report functie
   message.error = require("./messageError.js")(message, global.client);
+  delete require.cache[require.resolve("./messageError.js")];
   // Database gedoe voor de author
   if (!message.author.settings) {
     message.author.settings = await global.client.db.get(`author-${message.author.id}`);
@@ -28,6 +30,7 @@ module.exports = async (message) => {
 
   // Member addons
   message.member = require("./memberAddons.js")(message);
+  delete require.cache[require.resolve("./memberAddons.js")];
   message.getMember = (string) => {
     return message.mentions.members.first()
       || message.guild.cache.members.get(string)
