@@ -48,7 +48,7 @@ module.exports = async (message) => {
 
 
   // Command handler
-  setTimeout(() => { // Op andere thread runnen
+  setTimeout(async () => { // Op andere thread runnen
     if (!message.content.startsWith(global.client.config.prefix)) return;
     const args = message.content.slice(global.client.config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
