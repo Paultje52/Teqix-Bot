@@ -18,8 +18,19 @@ setInterval(() => {
 }, 60*1000);
 
 module.exports = async (message) => {
+  // TIJDELIJK: ALLES MOET IN EMBEDS
+  if (message.author.id === global.client.user.id) {
+    if (message.embeds.length !== 0) return;
+    message.channel.send(new discord.MessageEmbed()
+      .setTitle("Stoute developer!")
+      .setDescription(`Er is een hele stoute developer geweest, die heeft zijn/haar bericht niet in een embed gezet!\nDe developer krijgt geen cadeautje voor sinterklaas!`)
+      .setFooter("Rapporteer dit probleem aub bij een developer.")
+    );
+  }
+
   // Handle alle commands
   if (message.author.bot) return;
+
 
 
   // Custom embed
@@ -32,6 +43,9 @@ module.exports = async (message) => {
     return embed;
       // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
   };
+
+
+
   // Menu functie
   message.menu = functions.menu;
   // Error report functie
