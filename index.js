@@ -59,7 +59,9 @@ client.on("ready", async () => {
     let event = new file(client);
     if (event.name === "msg") event.name = "TeqixMessage";
     if (event.name === "ready") event.run();
-    else client.on(event.name, event.run);
+    else client.on(event.name, (...args) => {
+      event.run(...args);
+    });
     new autoReload(path).isClass().onChange((f, path) => {
       client.removeListener(event.name, event.run);
 
