@@ -85,6 +85,7 @@ setInterval(() => {
 }, 60*1000);
 
 client.on("message", (message) => {
+  message.recievedDate = Date.now();
   msgHandler(message);
 });
 
