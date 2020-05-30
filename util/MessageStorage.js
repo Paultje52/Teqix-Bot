@@ -101,6 +101,25 @@ module.exports = class MessageStorage {
       });
     });
   }
+  // Get the raw messages
+  async getRawMessages(customFilter = false) {
+    let filter;
+    if (customFilter) filter = customFilter;
+    else filter = this._formatFilter();
+    if (!filter) throw "Geen filter toegevoegd!";
+    return await this._get(filter);
+  }
+  // Get the raw edits
+  async getRawEdits(message = {}) {
+    if (Object.keys(message).length === 0) message = (await this.getMessages())[0];
+    return new Promise(async (res) => {
+      await this._waitForReady();
+      this._db.all(`SELECT * FROM edits WHERE messageid='${message.id}'`, [], async (err, data) => {
+        if (err) throw err;
+        res(data);
+      });
+    });
+  }
 
 
 
