@@ -78,9 +78,14 @@ client.on("ready", async () => {
   console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(cmds)} commands, ${chalk.red(spellen)} spellen en ${chalk.red(events)} events!`);
 });
 
-client.on("message", (message) => {
-  require("./util/messageHandler.js")(message);
+let msgHandler = require("./util/messageHandler.js");
+setInterval(() => {
   delete require.cache[require.resolve("./util/messageHandler.js")];
+  msgHandler = require("./util/messageHandler.js");
+}, 60*1000);
+
+client.on("message", (message) => {
+  msgHandler(message);
 });
 
 // Message reactions laten werken

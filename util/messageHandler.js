@@ -1,8 +1,26 @@
 const discord = require("discord.js");
 
+let functions = {
+  menu: require("./menu.js"),
+  error: require("./messageError.js"),
+  memberAddons: require("./memberAddons.js")
+}
+
+setInterval(() => {
+  delete require.cache[require.resolve("./menu.js")];
+  delete require.cache[require.resolve("./messageError.js")];
+  delete require.cache[require.resolve("./memberAddons.js")];
+  functions = {
+    menu: require("./menu.js"),
+    error: require("./messageError.js"),
+    memberAddons: require("./memberAddons.js")
+  }
+}, 60*1000);
+
 module.exports = async (message) => {
   // Handle alle commands
   if (message.author.bot) return;
+
 
   // Custom embed
   message.embed = () => {
@@ -14,11 +32,9 @@ module.exports = async (message) => {
     // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
   };
   // Menu functie
-  message.menu = require("./menu.js");
-  delete require.cache[require.resolve("./menu.js")];
+  message.menu = functions.menu;
   // Error report functie
-  message.error = require("./messageError.js")(message, global.client);
-  delete require.cache[require.resolve("./messageError.js")];
+  message.error = functions.error(message, global.client);
   // Database gedoe voor de author
   if (!message.author.settings) {
     message.author.settings = await global.client.db.get(`author-${message.author.id}`);
@@ -29,30 +45,12 @@ module.exports = async (message) => {
   }
 
   // Member addons
-  message.member = require("./memberAddons.js")(message);
-  delete require.cache[require.resolve("./memberAddons.js")];
+  message.member = functions.memberAddons(message);
   message.getMember = (string) => {
     return message.mentions.members.first()
       || message.guild.cache.members.get(string)
       || message.guild.cache.members.find(m => m.user.username.toLowerCase().includes(string));
   }
-
-  // CNMessage functie
-  global.client.emit("TeqixMessage", message);
-
-  // Add to message storage
-  setTimeout(() => {
-    global.client.messages._addMessage(message);
-  }, 1000);
-
-  // Spellen handler
-  setTimeout(() => { // Op andere thread runnen
-    if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("developer")) { // TODO: "developer" moet "gameroom" worden!
-      // Dit is mogelijk een spel, dus gaan we de spellen constructor callen
-      require("./spel.js").event(global.client, message);
-      delete require.cache[require.resolve("./spel.js")];
-    }
-  });
 
 
   // Command handler
@@ -95,4 +93,25 @@ module.exports = async (message) => {
       );
     });
   });
+
+
+  // Teqix Message functie
+  setTimeout(() => {
+    global.client.emit("TeqixMessage", message);
+  }, 2);
+
+
+  // Add to message storage
+  setTimeout(() => {
+    global.client.messages._addMessage(message);
+  }, 1000);
+
+  // Spellen handler
+  setTimeout(() => { // Op andere thread runnen
+    if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("developer")) { // TODO: "developer" moet "gameroom" worden!
+      // Dit is mogelijk een spel, dus gaan we de spellen constructor callen
+      require("./spel.js").event(global.client, message);
+      delete require.cache[require.resolve("./spel.js")];
+    }
+  }, 5);
 }
