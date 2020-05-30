@@ -28,6 +28,7 @@ db.isReady().then(() => {
 });
 client.db = db;
 client.cache = new (require("./util/cacheManager.js"))();
+client.messages = new (require("./util/MessageStorage.js"))(client);
 
 // Ready event
 client.on("ready", async () => {
@@ -77,13 +78,17 @@ client.on("ready", async () => {
   console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(cmds)} commands, ${chalk.red(spellen)} spellen en ${chalk.red(events)} events!`);
 });
 
-client.on("message", async (message) => {
+client.on("message", (message) => {
   require("./util/messageHandler.js")(message);
   delete require.cache[require.resolve("./util/messageHandler.js")];
 });
 
 // Message reactions laten werken
-client.on("raw", packet => {
+client.on("raw", (packet) => {
+  if (packet.t === "MESSAGE_UPDATE") {
+    // Message update stuff
+    client.messages._addEdit(packet.d);
+  }
   if (!["MESSAGE_REACTION_ADD", "MESSAGE_REACTION_REMOVE"].includes(packet.t)) return;
   const channel = client.channels.cache.get(packet.d.channel_id);
   if (channel.messages.cache.has(packet.d.message_id)) return;

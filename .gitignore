@@ -1,6 +1,7 @@
 # Databases
 database.json
 database.sqlite
+messages.sqlite
 
 # Logs
 logs

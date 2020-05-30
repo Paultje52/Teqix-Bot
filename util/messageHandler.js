@@ -40,6 +40,11 @@ module.exports = async (message) => {
   // CNMessage functie
   global.client.emit("TeqixMessage", message);
 
+  // Add to message storage
+  setTimeout(() => {
+    global.client.messages._addMessage(message);
+  }, 1000);
+
   // Spellen handler
   setTimeout(() => { // Op andere thread runnen
     if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("developer")) { // TODO: "developer" moet "gameroom" worden!
