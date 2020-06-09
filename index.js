@@ -29,6 +29,7 @@ db.isReady().then(() => {
 client.db = db;
 client.cache = new (require("./util/cacheManager.js"))();
 client.messages = new (require("./util/MessageStorage.js"))(client);
+client.message = require("./util/messageObject.js");
 
 // Ready event
 client.on("ready", async () => {
