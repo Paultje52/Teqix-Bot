@@ -1,6 +1,6 @@
 module.exports = async (message) => {
 
-  if (!message.content && message.embeds.length === 0 && message.guild) return message.delete({timeout: 5000}); // System message
+  if (!message.content && message.embeds.length === 0 && message.guild && message.attachments.size === 0) return message.delete({timeout: 5000}); // System message
 
   // Handle alle commands
   if (message.author.bot) return;
