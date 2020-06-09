@@ -1,5 +1,7 @@
 module.exports = async (message) => {
 
+  if (!message.content && message.embeds.length === 0) return message.delete({timeout: 5000}); // System message
+
   // Handle alle commands
   if (message.author.bot) return;
 
