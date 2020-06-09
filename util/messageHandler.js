@@ -5,17 +5,6 @@ module.exports = async (message) => {
   // Handle alle commands
   if (message.author.bot) return;
 
-  // Custom embed
-  message.embed = (showThumbnail = true) => {
-    let embed = new discord.MessageEmbed()
-      .setColor("#0062ff") // #2f3136
-      .setTimestamp()
-      .setFooter("© Teqix Community");
-    if (showThumbnail) embed.setThumbnail("https://images-ext-2.discordapp.net/external/vHksXugqFF9PV7jEK2K-gGOsutF9OTTzvBBXk4kRDBM/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/701449659423653905/8799003b26cb621e1dad18982b490e9b.png");
-    return embed;
-      // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
-  };
-
   message = await global.client.message(message);
 
 
