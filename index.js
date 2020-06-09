@@ -35,15 +35,6 @@ client.message = require("./util/messageObject.js");
 client.on("ready", async () => {
   await db.isReady();
 
-  // Spellen laden
-  let spellen = await loader("/spellen", (file, path) => {
-    new file(client);
-    new autoReload(path).isClass().onChange((f) => {
-      let spel = new f(client);
-      console.log(chalk.cyan(`Spel ${spel.name} is herladen!`));
-    });
-  });
-
   // Commands laden
   let cmds = await loader("/commands", (file, path) => {
     let command = new file(client);
@@ -78,7 +69,7 @@ client.on("ready", async () => {
 
 
   // Bot is online!
-  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(cmds)} commands, ${chalk.red(spellen)} spellen en ${chalk.red(events)} events!`);
+  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(cmds)} commands en ${chalk.red(events)} events!`);
 });
 
 let msgHandler = require("./util/messageHandler.js");

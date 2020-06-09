@@ -60,13 +60,4 @@ module.exports = async (message) => {
   setTimeout(() => {
     global.client.messages._addMessage(message);
   }, 1000);
-
-  // Spellen handler
-  setTimeout(() => { // Op andere thread runnen
-    if (message.channel.parent && message.channel.parent.name.toLowerCase().includes("developer")) { // TODO: "developer" moet "gameroom" worden!
-      // Dit is mogelijk een spel, dus gaan we de spellen constructor callen
-      require("./spel.js").event(global.client, message);
-      delete require.cache[require.resolve("./spel.js")];
-    }
-  }, 5);
 }
