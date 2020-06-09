@@ -1,3 +1,5 @@
+const discord = require("discord.js");
+
 let functions = {
   menu: require("./menu.js"),
   error: require("./messageError.js"),
@@ -36,7 +38,7 @@ module.exports = async function Message(message) {
     return embed;
       // .setAuthor(message.author.username, message.author.displayAvatarURL(), "https://teqixcommunity.nl/");
   };
-  
+
   // Menu functie
   message.menu = functions.menu;
   // Error report functie

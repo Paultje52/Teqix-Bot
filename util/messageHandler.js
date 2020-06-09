@@ -1,5 +1,3 @@
-const discord = require("discord.js");
-
 module.exports = async (message) => {
 
   // Handle alle commands
