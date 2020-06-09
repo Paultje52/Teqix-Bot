@@ -26,6 +26,10 @@
     }
   },
   "channels": {
-    "modlogs": "🗂➤mod_logs"
+    "modlogs": "🗂➤mod_logs",
+    "ticket": "developer"
+  },
+  "roles": {
+    "support": "Support Team"
   }
 }
