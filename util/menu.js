@@ -24,7 +24,7 @@ module.exports = class MessageMenu {
     return new Promise(async (res) => {
       this.collector = this.message.createReactionCollector(this._filter, {time: this._time});
       this.collector.on("collect", (reaction, user) => {
-        if (!this.reactions[reaction.emoji.name]) return;
+        if (this.reactions[reaction.emoji.name] === null || this.reactions[reaction.emoji.name] === undefined) return;
         this._events.reactie.forEach((f) => {
           f({
             naam: this.reactions[reaction.emoji.name],
