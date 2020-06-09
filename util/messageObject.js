@@ -16,15 +16,15 @@ setInterval(() => {
 }, 60*1000);
 
 module.exports = async function Message(message) {
-  // TIJDELIJK: ALLES MOET IN EMBEDS
-  if (message.author.id === global.client.user.id) {
-    if (message.embeds.length !== 0) return;
-    message.channel.send(new discord.MessageEmbed()
-      .setTitle("Stoute developer!")
-      .setDescription(`Er is een hele stoute developer geweest, die heeft zijn/haar bericht niet in een embed gezet!\nDe developer krijgt geen cadeautje voor sinterklaas!`)
-      .setFooter("Rapporteer dit probleem aub bij een developer.")
-    );
-  }
+  // // TIJDELIJK: ALLES MOET IN EMBEDS
+  // if (message.author.id === global.client.user.id) {
+  //   if (message.embeds.length !== 0) return;
+  //   message.channel.send(new discord.MessageEmbed()
+  //     .setTitle("Stoute developer!")
+  //     .setDescription(`Er is een hele stoute developer geweest, die heeft zijn/haar bericht niet in een embed gezet!\nDe developer krijgt geen cadeautje voor sinterklaas!`)
+  //     .setFooter("Rapporteer dit probleem aub bij een developer.")
+  //   );
+  // }
 
   // Menu functie
   message.menu = functions.menu;
