@@ -6,7 +6,15 @@ module.exports = class Status {
 
   async run() {
     // Scrolling statussen
-    let statusses = [{ text: "Teqix Community", type: "WATCHING" }]
+    let guild = this.client.guilds.cache.get("699987768318755138");
+    let statusses = [
+      { text: "Teqix Community", type: "WATCHING" },
+      { text: "Minecraft", type: "PLAYING" },
+      { text: `naar ${this.client.users.cache.size}`, type: "WATCHING" },
+      { text: `naar ${guild.roles.cache.find(r => r.name.toLowerCase().includes("staff")).members.size}`, type: "LISTENING" },
+      { text: `naar ${this.client.channels.cache.size}`, type: "WATCHING" },
+      { text: `met ${client.commands.size} commands`, type: "PLAYING" },
+    ];
     let i = setInterval(() => {
       let random = statusses[Math.floor(Math.random() * statusses.length)];
       this.client.user.setActivity(random.text, { type: random.type })
@@ -15,6 +23,6 @@ module.exports = class Status {
           clearInterval(i);
           console.log(3);
         });
-    }, 10e3);
+    }, 5e3);
   }
 }
