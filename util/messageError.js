@@ -1,17 +1,18 @@
 module.exports = (message, client) => {
   return async (msg, showReport = true) => {
+    if (!msg.includes("`")) msg = `\`\`\`${msg}\`\`\``;
     if (!showReport) {
       return message.channel.send(message.embed()
         .setTitle("Oeps!")
         .setColor("#ff0000")
-        .setDescription(`Er ging iets niet helemaal goed.\`\`\`${msg}\`\`\`Dit lijkt op een fout in de code van de bot, de fout is automatisch gerapporteerd. Sorry voor het ongemak.`)
+        .setDescription(`Er ging iets niet helemaal goed.\n${msg}\nDit lijkt op een fout in de code van de bot, de fout is automatisch gerapporteerd. Sorry voor het ongemak.`)
       );
     }
     let menu = new message.menu(
       await message.channel.send(message.embed()
         .setTitle("Oeps!")
         .setColor("#ff0000")
-        .setDescription(`Er ging iets niet helemaal goed.\`\`\`${msg}\`\`\`Is dit een fout in de bot? Reageer dan met :warning:!`)
+        .setDescription(`Er ging iets niet helemaal goed.\n${msg}\nIs dit een fout in de bot? Reageer dan met :warning:!`)
       ), {
       "⚠️": "warning",
       "❌": "stopMenu"
