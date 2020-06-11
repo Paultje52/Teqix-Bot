@@ -4,8 +4,6 @@ module.exports = class Status {
         this.name = "ready";
     }
 
-
-
     async run() {
         console.log("corona!")
         const api = require('novelcovid');
