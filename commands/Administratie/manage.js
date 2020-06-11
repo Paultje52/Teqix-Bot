@@ -25,9 +25,9 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 		member.actions = 0;
 		// if (member.user.id === message.author.id) return message.error("Je kan jezelf niet managen!");
 		if (args[1] && args[1].toLowerCase() === "mod") return this.modMenu(message, await message.channel.send(message.embed().setDescription("Laden...")), member);
-		if (args[1] && args[1].toLowerCase() === "rollen") return this.roleMenu(message, await message.channel.send(message.embed().setDescription("Laden...")), member);
-		if (args[1] && args[1].toLowerCase().includes("overig")) return this.utilMenu(message, await message.channel.send(message.embed().setDescription("Laden...")), member);
-
+		else if (args[1] && args[1].toLowerCase() === "rollen") return this.roleMenu(message, await message.channel.send(message.embed().setDescription("Laden...")), member);
+		else if (args[1] && args[1].toLowerCase().includes("overig")) return this.utilMenu(message, await message.channel.send(message.embed().setDescription("Laden...")), member);
+		else if (args[1] && this[args[1]]) return this[args[1]](message, await message.channel.send(message.embed().setDescription("Laden...")), member);
 		this.hoofdmenu(message, await message.channel.send(message.embed().setDescription("Laden...")), member);
 	}
 
@@ -57,7 +57,7 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 			menu.message.edit(message.embed()
 				.setAuthor(member.user.username, member.user.displayAvatarURL())
 				.setTitle("Manage")
-				.setDescription("**Wat wil je doen?**\n🔨 Moderatie acties\n⚖️ Rollen veranderen\n🗑️ Overige")
+				.setDescription("**Wat wil je doen?**\n🔨 Moderatie acties (Inc. Geschiedenis)\n⚖️ Rollen veranderen\n🗑️ Overige")
 				.setFooter("Druk op 🛑 om te stoppen • © Teqix Community")
 			);
 		});
@@ -68,6 +68,7 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 			"😶": "mute",
 			"🦵": "kick",
 			"⛔": "ban",
+			"📚": "geschiedenis",
 			"🛑": "stop",
 			"◀️": "return"
 		});
@@ -81,6 +82,7 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 			if (reactie.naam === "mute") return this.mute(message, msg, member);
 			if (reactie.naam === "kick") return this.kick(message, msg, member);
 			if (reactie.naam === "ban") return this.ban(message, msg, member);
+			if (reactie.naam === "geschiedenis") return this.history(message, msg, member);
 		});
 		menu.create().then(() => {
 			menu.message.edit(message.embed()
@@ -150,14 +152,128 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 
 	}
 	utilMenu(message, msg, member) {
-		return msg.edit("Sorry, deze functie is nog niet beschikbaar. Het developersteam is hier druk mee bezig!");
-		// TODO: Utilmenu maken
-		// TODO: Hier kan je de geschiedenis van de gebruiker zien. Je kan sorteren op actie (warn, mute, kick, ban) en gebruiker (Door wie het is gedaan).
-		// Hierin kan je ook de reden aanpassen en de actie verwijderen. Voor het verwijderen heb je moderator of hoger nodig!
-		// TODO: Notities. Je kan hier een notitie bij een gebruiker zien en aanpassen
-		// TODO: Annoniem bericht sturen naar de gebruiker
+		let menu = new message.menu(msg, {
+			"⭐": "reset_review",
+			"📝": "notities",
+			"🍪": "cookies",
+			"🎚️": "levels",
+			"🗞️": "message",
+			"🛑": "stop",
+			"◀️": "return"
+		});
+		menu.filter((_reaction, user) => user.id === message.author.id);
+		menu.reactie((reactie) => {
+			menu.stop();
+			menu.clearEmojis();
+			if (reactie.naam === "stop") return this.stopMenu(menu, member, message.embed);
+			if (reactie.naam === "return") return this.hoofdmenu(message, msg, member);
+			if (reactie.naam === "reset_review") return this.resetReview(message, msg, member);
+			if (reactie.naam === "notities") return this.notes(message, msg, member);
+			if (reactie.naam === "cookies") return this.cookies(message, msg, member);
+			if (reactie.naam === "levels") return this.levels(message, msg, member);
+			if (reactie.naam === "message") return this.anonymousMessage(message, msg, member);
+		});
+		menu.create().then(() => {
+			menu.message.edit(message.embed()
+				.setAuthor(member.user.username, member.user.displayAvatarURL())
+				.setTitle("Manage: Overige acties")
+				.setDescription("**Wat wil je doen?**\n⭐ Reviews resetten\n📝 Notities\n🍪 Cookies (Soon)\n🎚️ Levels\n🗞️ Annoniem bericht")
+				.setFooter("🛑 > Stoppen • ◀️ > Ga terug • © Teqix Community")
+			);
+		});
+	}
 
-		// Wanneer het levelsysteem en economy systeem in de Teqix Bot komt, kan je hier de waardes aanpassen!
+	/* 
+		Overige acties
+	*/
+	async resetReview(message, msg, member) {
+		let sure = await this.isSure(msg, message, `Weet je zeker dat je de reviewstatus wilt resetten?\n<@${member.user.id}> kan dan weer een review plaatsen!`, (_reaction, user) => user.id === message.author.id);
+		if (!sure) return this.utilMenu(message, msg, member);
+
+		member.actions++;
+		if (!member.user.settings) member.user.settings = await this.client.db.get(`author-${member.user.id}`);
+		if (!member.user.settings) member.user.settings = this.client.config.authorSettings;
+		member.user.settings.didReview = false;
+		await this.client.db.set(`author-${member.user.id}`, member.user.settings);
+
+		msg.edit(message.embed()
+			.setTitle("Manage: Review reset")
+			.setAuthor(member.user.username, member.user.displayAvatarURL())
+			.setDescription(`De reviewstatus is gereset! Je gaat over vijf seconden terug!`)
+		);
+		setTimeout(() => {
+			this.utilMenu(message, msg, member);
+		}, 5000);
+	}
+	anonymousMessage(message, msg, member) {
+		msg.edit(message.embed()
+			.setTitle("Manage: Annoniem bericht")
+			.setAuthor(member.user.username, member.user.displayAvatarURL())
+			.setDescription(`Hiermee wordt er een "annoniem" bericht verstuurt naar <@${member.user.id}>, namens het staffteam.\n_Stuur het bericht dat je wilt sturen in de chat!_`)
+		);
+		let menu = new message.menu(msg, {
+			"🛑": "stop"
+		});
+		menu.filter((_reaction, user) => user.id === message.author.id);
+		menu.reactie((reactie) => {
+			menu.stop();
+			menu.clearEmojis();
+			collector.stop();
+			this.utilMenu(message, msg, member);
+		});
+		menu.create();
+
+		// Collector
+		let collector = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time: 1000 * 60 * 60 });
+		collector.on("collect", async (m) => {
+			let msgContent = m.content;
+			menu.stop();
+			await menu.clearEmojis();
+			collector.stop();
+			m.delete();
+			let sure = await this.isSure(msg, message, `Moet ik het volgende naar <@${member.user.id}> sturen?\n\`\`\`${msgContent}\`\`\``, (_reaction, user) => user.id === message.author.id);
+			if (!sure) return this.utilMenu(message, msg, member);
+			try {
+				member.user.send(message.embed()
+					.setTitle("Bericht van Teqix Staff")
+					.setDescription(msgContent)
+				);
+				member.actions++;
+				msg.edit(message.embed()
+					.setTitle("Verstuurt!")
+					.setDescription(`Het bericht is verstuurt naar <@${member.user.id}>!`)
+					.setFooter("Je gaat over 5 sec terug!")
+				);
+			} catch(e) {
+				msg.edit(message.embed()
+					.setTitle("Oeps!")
+					.setDescription(`Ik kan geen berichten sturen naar <@${member.user.id}>!`)
+					.setFooter("Je gaat over 5 sec terug!")
+				);
+			}
+			setTimeout(() => {
+				this.utilMenu(message, msg, member);
+			}, 5000);
+		});
+	}
+	levels(message, msg, member) {
+		return msg.edit("De developers zijn hier nog druk mee bezig!");
+		// TODO: Levelsysteem. Hier kan je het aantal XP aanpassen, bijvoorbeeld de gebruiker levelup of leveldown laten gaan. 
+		// Ook kan de gebruiker worden gereset.
+	}
+	cookies(message, msg, member) {
+		return msg.edit(message.embed()
+			.setTitle("Manage: Cookies")
+			.setDescription("De developers zijn nog bezig met het cookies systeem. Zodra dit af is, zal dit deel van manage werken!")
+		);
+		// Cookies komen in een latere release!
+	}
+	notes(message, msg, member) {
+		return msg.edit("De developers zijn hier nog druk mee bezig!");
+		// TODO: Notities menu. Hier staan de notities van de gebruiker (max 5, elke notitie maximaal 300 tekens (STRING.length))
+		// Hier kan je ook notities aanpassen (met nummers).
+		// Bij het aanpassen kan je 'm vervangen of verwijderen. Ook zie je dan wie de notitie daar heeft neergezet.
+		// Als er nog geen vijf notities zijn, dan een + om dr 1tje toe te voegen
 	}
 
 
@@ -165,6 +281,11 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 	/*
 		Moderatie acties
 	*/
+	history(message, msg, member) {
+		return msg.edit("Dev team is hier mee bezig!");
+		// TODO: History gedoe. Hier kan je zien hoeveel mutes, warns, kicks en bans een gebruiker heeft, met de redenen. Maximaal 5 per ding.
+		// Ook kan je hier dingen weghalen of redenen veranderen.
+	}
 	warn(message, msg, member) {
 		msg.edit(message.embed()
 			.setAuthor(member.user.username, member.user.displayAvatarURL())
