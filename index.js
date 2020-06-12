@@ -18,6 +18,12 @@ loader("/clientExtenders", (file) => {
   else clientExtenders.push(file.function);
 });
 
+// Load giveaway events
+let giveawayEvents = require("./giveawayReaction");
+giveawayEvents.forEach(event => client.on(event.name, (...args) => {
+  event.run(...args, client);
+}));
+
 // Ready event
 client.on("ready", async () => {
   // Client extenders laden

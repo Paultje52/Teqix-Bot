@@ -16,5 +16,15 @@ module.exports = {
     client.config = new autoReload(configPath.join("/"), "config.json").onChange((c) => config = c).getFile();
     client.prefix = client.config.prefix;
     client.login(client.config.token);
+    
+    Array.prototype.removeByValue = function(val) {
+      for (let i = 0; i < this.length; i++) {
+        if (this[i] === val) {
+          this.splice(i, 1);
+          i--;
+        }
+      }
+      return this;
+    }
   }
 }
