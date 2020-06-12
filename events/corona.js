@@ -7,7 +7,6 @@ module.exports = class Status {
 
 
     async run() {
-        console.log("corona!")
         const api = require('novelcovid');
 
         async function updateData(m) {
