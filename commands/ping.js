@@ -12,7 +12,7 @@ module.exports = class Ping extends require(`${process.cwd()}/util/command.js`) 
 		let cmdHandlerSpeed = Math.floor(Date.now()-message.recievedDate);
 		// Start
 		let start = Date.now();
-		let msg = await message.channel.send(":ping_pong:");
+		let msg = await message.channel.send(message.embed().setThumbnail("").setDescription(":ping_pong:"));
 		start = Date.now() - start;
 		// Database ping
 		let dbPing = Date.now();
@@ -21,6 +21,6 @@ module.exports = class Ping extends require(`${process.cwd()}/util/command.js`) 
 		await this.client.db.delete("tmp");
 		dbPing = Date.now() - dbPing;
 		// Bericht
-		await msg.edit(`:ping_pong: ${Math.floor(start)}ms\n:blue_heart: ${Math.floor(this.client.ws.ping)}ms\n🗒️ ${Math.floor(dbPing/3*10)/10}ms\n🤔 ${cmdHandlerSpeed}ms`);
+		await msg.edit(message.embed().setThumbnail("").setDescription(`:ping_pong: ${Math.floor(start)}ms\n:blue_heart: ${Math.floor(this.client.ws.ping)}ms\n🗒️ ${Math.floor(dbPing/3*10)/10}ms\n🤔 ${cmdHandlerSpeed}ms`));
 	}
 }
