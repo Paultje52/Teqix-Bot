@@ -1,6 +1,7 @@
 const loader = require("../util/loader.js");
 const discord = require("discord.js");
 const autoReload = require("../util/autoReload.js");
+const chalk = require("chalk");
 
 module.exports = {
   priority: 2,
