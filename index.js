@@ -1,75 +1,32 @@
 const chalk = require("chalk");
 console.log(chalk.blue("Bot opstarten..."));
-const autoReload = require("./util/autoReload.js");
 
 const discord = require("discord.js");
-let loader = require("./util/loader.js");
-let config = new autoReload(__dirname, "config.json").onChange((c) => config = c).getFile();
+const loader = require("./util/loader.js");
 
 // Client
 const client = new discord.Client();
-client.login(config.token);
-client.config = config;
 global.client = client;
 
-// Commands
-const commands = new discord.Collection();
-client.commands = commands;
-client.prefix = config.prefix;
-client.config = config;
-
-
-// Database
-let db = new (require("./database.js"))({
-  development: true
+let clientExtenders = [];
+loader("/clientExtenders", (file) => {
+  // Priority = 0 > Load now!
+  // Priority = 1 > Load before others
+  // Priority = 2 > Load after
+  if (file.priority === 0) file.function(client);
+  else if (file.priority === 1) clientExtenders = [file.function, ...clientExtenders];
+  else clientExtenders.push(file.function);
 });
-db.isReady().then(() => {
-  console.log(chalk.greenBright("Database is ready!"));
-});
-client.db = db;
-client.cache = new (require("./util/cacheManager.js"))();
-client.messages = new (require("./util/MessageStorage.js"))(client);
-client.message = require("./util/messageObject.js");
 
 // Ready event
 client.on("ready", async () => {
-  await db.isReady();
-
-  // Commands laden
-  let cmds = await loader("/commands", (file, path) => {
-    let command = new file(client);
-    commands.set(command.help.name, command);
-    new autoReload(path).isClass().onChange((f) => {
-      command = new f(client);
-      commands.set(command.help.name, command);
-      console.log(chalk.cyan(`Command ${command.help.name} is herladen!`));
-    });
-  });
-  
-  // Events laden
-  let events = await loader("/events", (file, path) => {
-    let event = new file(client);
-    if (event.name === "msg") event.name = "TeqixMessage";
-    if (event.name === "ready") event.run();
-    else client.on(event.name, (...args) => {
-      event.run(...args);
-    });
-    new autoReload(path).isClass().onChange((f, path) => {
-      client.removeListener(event.name, event.run);
-
-      event = new f(client);
-      if (event.name === "msg") event.name = "TeqixMessage";
-      if (event.name === "ready") {
-        return console.log(chalk.keyword("orange")(`Om de verandering van ${path.split("events")[1]} actief te maken, zal de bot opnieuw moeten opstarten!`));
-      }
-      client.on(event.name, event.run);
-      console.log(chalk.cyan(`Event ${path.split("events")[1]} is herladen!`));
-    });
-  });
-
+  // Client extenders laden
+  for (let extender of clientExtenders) {
+    await extender(client);
+  }
 
   // Bot is online!
-  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(cmds)} commands en ${chalk.red(events)} events!`);
+  console.log(chalk.black.bgGreen(`\n\n${chalk.bold(client.user.username)} is online!`), `\n\n[${chalk.bold("TEQIX STATS")}]\nServers: ${chalk.red(client.guilds.cache.size)}\nGebruikers: ${chalk.red(client.users.cache.size)}\nKanalen: ${chalk.red(client.channels.cache.size)}\nBot: ${chalk.red(client.cmds)} commands en ${chalk.red(client.events)} events!`);
 });
 
 let msgHandler = require("./util/messageHandler.js");
