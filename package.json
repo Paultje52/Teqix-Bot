@@ -33,6 +33,7 @@
     "fsscanner": "^1.0.23",
     "json-config-store": "0.0.1",
     "moment": "^2.25.3",
+    "novelcovid": "^2.2.0",
     "request": "^2.88.2",
     "sqlite3": "^4.2.0",
     "ytdl-core": "^2.1.2"
