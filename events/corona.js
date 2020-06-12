@@ -32,11 +32,11 @@ module.exports = class Status {
         let i = setInterval(async () => {
             let dbChannel = await this.client.db.get("coronaChannel");
             let channel = client.channels.cache.get(dbChannel);
-            if (!channel) return console.log("geen corona kanaal");
+            if (!channel) return /*console.log("geen corona kanaal");*/
             let dbmsg = await this.client.db.get("coronaMsg")
             let msg = channel.messages.fetch(dbmsg);
             if (msg) updateData(msg);
-            else console.log("geen corona msg")
+            // else console.log("geen corona msg")
         }, 10e3);
     }
 }
