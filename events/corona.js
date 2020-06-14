@@ -1,3 +1,4 @@
+const discord = require("discord.js")
 module.exports = class Status {
     constructor(client) {
         this.client = client;
@@ -9,20 +10,24 @@ module.exports = class Status {
         const api = require('novelcovid');
 
         async function updateData(m) {
-            return new Promise(function (sendSuccess, sendError) {
+            return new Promise(async function (sendSuccess, sendError) {
 
-                api.countries({ country: ['belgium', 'netherlands'] }).then(info => {
+                api.countries({ country: ['belgium', 'netherlands'] }).then(async info => {
                     let belgie = info[0];
                     let nederland = info[1];
                     let dateb = new Date(belgie.updated).toISOString().replace(/T/, ' ').replace(/-/, ' ').replace(/\..+/, '');
                     let daten = new Date(nederland.updated).toISOString().replace(/T/, ' ').replace(/-/, ' ').replace(/\..+/, '');
 
+                    m = await client.message(m);
                     let embed = m.embed()
                         .setTitle("Corona updates")
                         .addField("België", `Laatst geüpdatet: ${dateb}\nBesmetten: ${belgie.cases}(+ ${belgie.todayCases})\nGenezen personen: ${belgie.recovered}\nZwaar intensieven: ${belgie.critical}\nOverleden personen: ${belgie.deaths}(+ ${belgie.todayDeaths})`)
                         .addField("Nederland", `Laatst geüpdatet: ${daten}\nBesmetten: ${nederland.cases}(+ ${nederland.todayCases})\nGenezen personen: ${nederland.recovered}\nZwaar intensieven: ${nederland.critical}\nOverleden personen: ${nederland.deaths}(+ ${nederland.todayDeaths})`)
                         .setTimestamp(Date.now());
-                    m.edit("Corona updates", embed)
+
+
+                    m.edit(embed)
+                    console.log("message updated!")
                 })
             });
 
@@ -33,8 +38,8 @@ module.exports = class Status {
             let channel = client.channels.cache.get(dbChannel);
             if (!channel) return console.log("geen corona kanaal");
             let dbmsg = await this.client.db.get("coronaMsg")
-            let msg = channel.messages.fetch(dbmsg);
-            if (msg) updateData(msg);
+            let msg = await channel.messages.fetch(dbmsg);
+            if (msg) await updateData(msg);
             else console.log("geen corona msg")
         }, 10e3);
     }
