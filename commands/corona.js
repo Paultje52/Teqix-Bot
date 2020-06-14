@@ -15,12 +15,10 @@ module.exports = class Ping extends require(`${process.cwd()}/util/command.js`) 
         if (!kanaal) return message.error("Geen kanaal opgegeven!");
 
         await this.client.db.set("coronaChannel", kanaal.id);
-
         let msg = await message.channel.send(message.embed()
             .setTitle("Info ophalen..")
         );
         await this.client.db.set("coronaMsg", msg.id)
-        let corona = require("../events/corona.js")
 
     }
 }
