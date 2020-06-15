@@ -3,6 +3,10 @@ database.json
 database.sqlite
 messages.sqlite
 
+# Birthday package
+/birth/countdown.js
+/birth/birth.log
+
 # Logs
 logs
 *.log
