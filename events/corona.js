@@ -24,7 +24,6 @@ module.exports = class Status {
                         .addField("Nederland", `Laatst geüpdatet: ${daten}\nBesmetten: ${nederland.cases}(+ ${nederland.todayCases})\nGenezen personen: ${nederland.recovered}\nZwaar intensieven: ${nederland.critical}\nOverleden personen: ${nederland.deaths}(+ ${nederland.todayDeaths})`)
                         .setTimestamp(Date.now());
                     m.edit(embed)
-                    console.log("message updated!")
                 })
             });
 
