@@ -30,7 +30,6 @@ module.exports = class Status {
             });
 
         }
-
         let i = setInterval(async () => {
             let dbChannel = await this.client.db.get("coronaChannel");
             let channel = client.channels.cache.get(dbChannel);
