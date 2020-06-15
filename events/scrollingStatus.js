@@ -7,6 +7,7 @@ module.exports = class Status {
   async run() {
     // Scrolling statussen
     let guild = this.client.guilds.cache.get("699987768318755138");
+    if (!guild) guild = {roles: {cache: {find: () => {return {members: {size: 50}}}}}}
     let statusses = [
       { text: "Teqix Community", type: "WATCHING" },
       { text: "Minecraft", type: "PLAYING" },

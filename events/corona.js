@@ -6,7 +6,6 @@ module.exports = class Status {
     }
 
     async run() {
-        console.log("corona!")
         const api = require('novelcovid');
 
         async function updateData(m) {
@@ -33,7 +32,7 @@ module.exports = class Status {
         let i = setInterval(async () => {
             let dbChannel = await this.client.db.get("coronaChannel");
             let channel = client.channels.cache.get(dbChannel);
-            if (!channel) return console.log("geen corona kanaal");
+            if (!channel) return /*console.log("geen corona kanaal");*/
             let dbmsg = await this.client.db.get("coronaMsg")
             let msg = await channel.messages.fetch(dbmsg);
             if (msg) await updateData(msg);
