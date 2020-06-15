@@ -19,6 +19,5 @@ module.exports = class Ping extends require(`${process.cwd()}/util/command.js`) 
             .setTitle("Info ophalen..")
         );
         await this.client.db.set("coronaMsg", msg.id)
-
     }
 }
