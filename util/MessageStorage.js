@@ -174,7 +174,7 @@ module.exports = class MessageStorage {
   _addMessage(message) {
     this._waitForReady().then(() => {
       let date = new Date(message.createdTimestamp);
-      this._db.all(`INSERT INTO messages (id, author, year, month, day, hour, date, channel, edits, content) VALUES ('${message.id}', '${message.author.id}', '${date.getFullYear()}', '${date.getMonth()}', '${date.getDay()}', '${date.getHours()}', '${message.createdTimestamp}', '${message.channel.id}', '[]', '${message.content.split("'").join("\\'").split(";").join("\\;")}')`, (err) => {
+      this._db.all(`INSERT INTO messages (id, author, year, month, day, hour, date, channel, edits, content) VALUES ('${message.id}', '${message.author.id}', '${date.getFullYear()}', '${date.getMonth()}', '${date.getDate()}', '${date.getHours()}', '${message.createdTimestamp}', '${message.channel.id}', '[]', '${message.content.split("'").join("\\'").split(";").join("\\;")}')`, (err) => {
         // if (err) throw err;
       });
     });
@@ -186,7 +186,7 @@ module.exports = class MessageStorage {
         if (data.length === 0) return;
         let date = new Date(message.edited_timestamp);
         let edits = JSON.parse(data[0].edits);
-        this._db.all(`INSERT INTO edits (messageid, year, month, day, hour, date, content, channel) VALUES ('${message.id}', '${date.getFullYear()}', '${date.getMonth()}', '${date.getDay()}', '${date.getHours()}', '${date.getTime()}', '${message.content}', '${message.channel_id}')`, (err) => {
+        this._db.all(`INSERT INTO edits (messageid, year, month, day, hour, date, content, channel) VALUES ('${message.id}', '${date.getFullYear()}', '${date.getMonth()}', '${date.getDate()}', '${date.getHours()}', '${date.getTime()}', '${message.content}', '${message.channel_id}')`, (err) => {
           if (err) throw err;
           edits.push(date.getTime());
           this._db.all(`UPDATE messages SET edits='${JSON.stringify(edits)}' WHERE id='${message.id}'`, (err) => {
