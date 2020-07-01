@@ -114,7 +114,7 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 
 		let roleGroups = { present: [], missing: [] };
 		rolesArray.forEach(role => {
-			if(message.member.roles.cache.has(role.id)) roleGroups.present.push(role);
+			if (message.member.roles.cache.has(role.id)) roleGroups.present.push(role);
 			else roleGroups.missing.push(role)
 		})
 
@@ -152,6 +152,9 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 
 	}
 	utilMenu(message, msg, member) {
+
+		// level, notes, history
+
 		let menu = new message.menu(msg, {
 			"⭐": "reset_review",
 			"📝": "notities",
@@ -244,7 +247,7 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 					.setDescription(`Het bericht is verstuurt naar <@${member.user.id}>!`)
 					.setFooter("Je gaat over 5 sec terug!")
 				);
-			} catch(e) {
+			} catch (e) {
 				msg.edit(message.embed()
 					.setTitle("Oeps!")
 					.setDescription(`Ik kan geen berichten sturen naar <@${member.user.id}>!`)
@@ -258,6 +261,7 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 	}
 	levels(message, msg, member) {
 		return msg.edit("De developers zijn hier nog druk mee bezig!");
+		// Flor
 		// TODO: Levelsysteem. Hier kan je het aantal XP aanpassen, bijvoorbeeld de gebruiker levelup of leveldown laten gaan. 
 		// Ook kan de gebruiker worden gereset.
 	}
@@ -270,22 +274,237 @@ module.exports = class Manage extends require(`${process.cwd()}/util/command.js`
 	}
 	notes(message, msg, member) {
 		return msg.edit("De developers zijn hier nog druk mee bezig!");
+		// Flor
 		// TODO: Notities menu. Hier staan de notities van de gebruiker (max 5, elke notitie maximaal 300 tekens (STRING.length))
 		// Hier kan je ook notities aanpassen (met nummers).
 		// Bij het aanpassen kan je 'm vervangen of verwijderen. Ook zie je dan wie de notitie daar heeft neergezet.
 		// Als er nog geen vijf notities zijn, dan een + om dr 1tje toe te voegen
 	}
-
-
-
 	/*
 		Moderatie acties
 	*/
 	history(message, msg, member) {
-		return msg.edit("Dev team is hier mee bezig!");
 		// TODO: History gedoe. Hier kan je zien hoeveel mutes, warns, kicks en bans een gebruiker heeft, met de redenen. Maximaal 5 per ding.
 		// Ook kan je hier dingen weghalen of redenen veranderen.
+
+		let menu = new message.menu(msg, {
+			"⚠️": "warns",
+			"😶": "mutes",
+			"🦵": "kicks",
+			"⛔": "bans",
+			"🛑": "stop",
+			"◀️": "return"
+		});
+		menu.filter((_reaction, user) => user.id === message.author.id);
+		menu.reactie((reactie) => {
+			menu.stop();
+			menu.clearEmojis();
+			if (reactie.naam === "stop") return this.stopMenu(menu, member, message.embed);
+			if (reactie.naam === "return") return this.utilMenu(message, msg, member);
+			if (reactie.naam === "warns") {
+				let warns = member.user.settings.warns;
+				if (warns.length == 0) {
+					msg.edit(message.embed()
+						.setTitle(`Warns ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft 0 warns!`)
+					);
+				} else {
+					msg.edit(message.embed()
+						.setTitle(`Warns ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft ${warns.length} warns!\nKlik op 📚 om ze allemaal te bekijken.`)
+					);
+					let menu = new message.menu(msg, {
+						"📚": "bekijk",
+						"🖊️": "bewerk",
+						"🛑": "stop",
+						"◀️": "return"
+					});
+					menu.filter((_reaction, user) => user.id === message.author.id);
+					menu.reactie((reactie) => {
+						menu.stop();
+						menu.clearEmojis();
+						if (reactie.naam === "stop") return this.stopMenu(menu, member, message.embed);
+						if (reactie.naam === "return") return this.utilMenu(message, msg, member);
+						if (reactie.naam === "bekijk") {
+							let txt = "";
+							warns.forEach(w => {
+								txt += `**Warn ${w.actionSessionNumber}**\nDoor <@${w.by.id}>\nReden: \`${w.reason}\`\nDatum: ${new Date(w.time).toLocaleString()}\n`
+							})
+							msg.edit(message.embed()
+								.setTitle(`Warns ${member.user.username}`)
+								.setDescription(txt)
+							);
+						} else if (reactie.naam == "bewerk") {
+							return msg.edit(message.embed()
+								.setDescription("Dit is nog in onderhoud!")
+							)
+						}
+					});
+					menu.create().then(() => {
+						menu.message.edit(message.embed()
+							.setTitle(`Warns ${member.user.username}`)
+							.setDescription(`${member.user.tag} heeft ${warns.length} warn(s)!\nKlik op 📚 om ze allemaal te bekijken.`)
+						);
+					});
+				}
+			}
+			if (reactie.naam === "mutes") {
+				let mutes = member.user.settings.mutes;
+				if (mutes.length == 0) {
+					msg.edit(message.embed()
+						.setTitle(`Mutes ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft 0 mutes!`)
+					);
+				} else {
+					msg.edit(message.embed()
+						.setTitle(`Mutes ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft ${mutes.length} mute(s)!\nKlik op 📚 om ze allemaal te bekijken.`)
+					);
+					let menu = new message.menu(msg, {
+						"📚": "bekijk",
+						"🖊️": "bewerk",
+						"🛑": "stop",
+						"◀️": "return"
+					});
+					menu.filter((_reaction, user) => user.id === message.author.id);
+					menu.reactie((reactie) => {
+						menu.stop();
+						menu.clearEmojis();
+						if (reactie.naam === "stop") return this.stopMenu(menu, member, message.embed);
+						if (reactie.naam === "return") return this.utilMenu(message, msg, member);
+						if (reactie.naam === "bekijk") {
+							let txt = "";
+							mutes.forEach(w => {
+								txt += `**Mute ${w.actionSessionNumber}**\nDoor <@${w.by.id}>\nReden: \`${w.reason}\`\nDatum: ${new Date(w.time).toLocaleString()}\n`
+							})
+							msg.edit(message.embed()
+								.setTitle(`Mutes ${member.user.username}`)
+								.setDescription(txt)
+							);
+						} else if (reactie.naam == "bewerk") {
+							return msg.edit(message.embed()
+								.setDescription("Dit is nog in onderhoud!")
+							)
+						}
+					});
+					menu.create().then(() => {
+						menu.message.edit(message.embed()
+							.setTitle(`Mutes ${member.user.username}`)
+							.setDescription(`${member.user.tag} heeft ${mutes.length} mute(s)!\nKlik op 📚 om ze allemaal te bekijken.`)
+						);
+					});
+				}
+			}
+			if (reactie.naam === "kicks") {
+				let kicks = member.user.settings.kicks;
+				if (kicks.length == 0) {
+					msg.edit(message.embed()
+						.setTitle(`Kicks ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft 0 kicks!`)
+					);
+				} else {
+					msg.edit(message.embed()
+						.setTitle(`Kicks ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft ${kicks.length} kicks!\nKlik op 📚 om ze allemaal te bekijken.`)
+					);
+					let menu = new message.menu(msg, {
+						"📚": "bekijk",
+						"🖊️": "bewerk",
+						"🛑": "stop",
+						"◀️": "return"
+					});
+					menu.filter((_reaction, user) => user.id === message.author.id);
+					menu.reactie((reactie) => {
+						menu.stop();
+						menu.clearEmojis();
+						if (reactie.naam === "stop") return this.stopMenu(menu, member, message.embed);
+						if (reactie.naam === "return") return this.utilMenu(message, msg, member);
+						if (reactie.naam === "bekijk") {
+							let txt = "";
+							kicks.forEach(w => {
+								txt += `**Kick ${w.actionSessionNumber}**\nDoor <@${w.by.id}>\nReden: \`${w.reason}\`\nDatum: ${new Date(w.time).toLocaleString()}\n`
+							})
+							msg.edit(message.embed()
+								.setTitle(`Kicks ${member.user.username}`)
+								.setDescription(txt)
+							);
+						} else if (reactie.naam == "bewerk") {
+							return msg.edit(message.embed()
+								.setDescription("Dit is nog in onderhoud!")
+							)
+						}
+					});
+					menu.create().then(() => {
+						menu.message.edit(message.embed()
+							.setTitle(`Kicks ${member.user.username}`)
+							.setDescription(`${member.user.tag} heeft ${kicks.length} kick(s)!\nKlik op 📚 om ze allemaal te bekijken.`)
+						);
+					});
+				}
+			}
+			if (reactie.naam === "bans") {
+				let bans = member.user.settings.bans;
+				if (bans.length == 0) {
+					msg.edit(message.embed()
+						.setTitle(`Bans ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft 0 bans!`)
+					);
+				} else {
+					msg.edit(message.embed()
+						.setTitle(`Bans ${member.user.username}`)
+						.setDescription(`${member.user.tag} heeft ${bans.length} bans!\nKlik op 📚 om ze allemaal te bekijken.`)
+					);
+					let menu = new message.menu(msg, {
+						"📚": "bekijk",
+						"🖊️": "bewerk",
+						"🛑": "stop",
+						"◀️": "return"
+					});
+					menu.filter((_reaction, user) => user.id === message.author.id);
+					menu.reactie((reactie) => {
+						menu.stop();
+						menu.clearEmojis();
+						if (reactie.naam === "stop") return this.stopMenu(menu, member, message.embed);
+						if (reactie.naam === "return") return this.utilMenu(message, msg, member);
+						if (reactie.naam === "bekijk") {
+							let txt = "";
+							bans.forEach(w => {
+								txt += `**Ban ${w.actionSessionNumber}**\nDoor <@${w.by.id}>\nReden: \`${w.reason}\`\nDatum: ${new Date(w.time).toLocaleString()}\n`
+							})
+							msg.edit(message.embed()
+								.setTitle(`Bans ${member.user.username}`)
+								.setDescription(txt)
+							);
+						} else if (reactie.naam == "bewerk") {
+							return msg.edit(message.embed()
+								.setDescription("Dit is nog in onderhoud!")
+							)
+						}
+					});
+					menu.create().then(() => {
+						menu.message.edit(message.embed()
+							.setTitle(`Bans ${member.user.username}`)
+							.setDescription(`${member.user.tag} heeft ${bans.length} bans(s)!\nKlik op 📚 om ze allemaal te bekijken.`)
+						);
+					});
+				}
+			}
+		});
+		menu.create().then(() => {
+			menu.message.edit(message.embed()
+				.setAuthor(member.user.username, member.user.displayAvatarURL())
+				.setTitle("Manage: Moderatie acties")
+				.setDescription("**Wat wil je doen?**\n⚠️ Warns bekijken/aanpassen\n😶 Mutes bekijken/aanpassen\n🦵 Kicks bekijken/aanpassen\n⛔ Bans bekijken/aanpassen")
+				.setFooter("🛑 > Stoppen • ◀️ > Ga terug • © Teqix Community")
+			);
+		});
+		function viewActions(name) {
+			let actions = message.author.settings
+			console.log(actions)
+		}
+
 	}
+
 	warn(message, msg, member) {
 		msg.edit(message.embed()
 			.setAuthor(member.user.username, member.user.displayAvatarURL())
