@@ -11,7 +11,6 @@ module.exports = class UserSettingsLoader {
       user.updateDatabase = () => {
         return global.client.db.set(`author-${user.id}`, usersettings);
       }
-      console.log(user.username, Object.keys(user.settings));
     });
   }
 }
