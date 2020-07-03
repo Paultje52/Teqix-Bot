@@ -9,7 +9,7 @@ module.exports = class UserSettingsLoader {
       user.settings = await this.client.db.get(`author-${user.id}`);
       if (!user.settings) user.settings = this.client.config.authorSettings;
       user.updateDatabase = () => {
-        return global.client.db.set(`author-${user.id}`, usersettings);
+        return global.client.db.set(`author-${user.id}`, user.settings);
       }
     });
   }
