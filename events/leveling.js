@@ -12,7 +12,7 @@ module.exports = class Leveling {
       message.author.settings.leveling.level = newLevel;
       message.channel.send(message.embed()
         .setTitle("Levelup!")
-        .setDescription(`:tada: Je bent nu level **${newLevel}**! :tada:`)
+        .setDescription(`:tada: Gefeliciteerd ${message.author}, je bent nu level **${newLevel}**! :tada:`)
       );
     }
     message.author.updateDatabase();
