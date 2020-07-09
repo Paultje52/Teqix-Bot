@@ -27,6 +27,7 @@ module.exports = class Download extends require(`${process.cwd()}/util/command.j
     let id = args[0];
     if (args[0].toLowerCase().includes("youtu.be") && args[0].split("youtu.be/")[1]) id = args[0].split("youtu.be/")[1];
     else if (args[0].toLowerCase().includes("youtube") && args[0].split("v=")[1]) id = args[0].split("v=")[1].split("&")[0];
+    let videoID = id;
     let cached = await this.client.db.get(`downloadcache-${id}`);
     if (cached) {
       request(`http://tinyurl.com/api-create.php?url=${cached}`, (err, _res, url) => {
@@ -60,23 +61,24 @@ module.exports = class Download extends require(`${process.cwd()}/util/command.j
     stream.on("info", (inf, format) => {
       info = inf;
       frmt = format;
-      this.client.cache.set(`download.${info.player_response.videoDetails.title}.${format.container}`, "");
-      filePath = this.client.cache._getPath(`download.${info.player_response.videoDetails.title}.${format.container}`);
+      this.client.cache.set(`download.${videoID}.${format.container}`, "");
+      filePath = this.client.cache._getPath(`download.${videoID}.${format.container}`);
       stream.pipe(fs.createWriteStream(filePath));
     });
     stream.on("end", async () => {
       let mbs = Math.round(size * Math.pow(2, -20));
       if (mbs > 8) return msg.edit(`Het bestand is te groot om over Discord te versturen! Het spijt me enorm dat je teleurgesteld bent in mij, ik ben ook teleurgesteld in mijzelf :-( `);
       msg.edit("Ik zet de audio om in iets wat bestendig is voor menselijke consumptie...");
-      let attachmentSpamChannel = client.channels.cache.get("709773093601542275");
-      let mp3Path = await this.webmToMp3(filePath, `download.${info.player_response.videoDetails.title}`);
-      let m = await attachmentSpamChannel.send(new MessageAttachment(mp3Path, `${info.player_response.videoDetails.title}.mp3`));
+      let attachmentSpamChannel = client.channels.cache.find(c => c.name === this.client.config.channels.attachmentSpamChannel);
+      if (!attachmentSpamChannel) throw new Error("Attachment spam channel not found!");
+      let mp3Path = await this.webmToMp3(filePath, `download.${videoID}`);
+      let m = await attachmentSpamChannel.send(new MessageAttachment(mp3Path, `${videoID}.mp3`));
       let fullURL = m.attachments.first().url;
       request(`http://tinyurl.com/api-create.php?url=${fullURL}`, (err, _res, url) => {
         if (err) url = fullURL;
         msg.edit(`Kijk eens hoe aardig ik toch ben!? Ik heb speciaal voor jou een video gestolen van YouTube en omgezet voor menselijke consumptie in ${Date.now() - start}ms!\nHier kan je het downloaden: ${url}`);
-        this.client.cache.remove(`download.${info.player_response.videoDetails.title}.${frmt.container}`);
-        this.client.cache.remove(`download.${info.player_response.videoDetails.title}`);
+        this.client.cache.remove(`download.${videoID}.${frmt.container}`);
+        this.client.cache.remove(`download.${videoID}`);
       });
       this.client.db.set(`downloadcache-${id}`, fullURL);
     });

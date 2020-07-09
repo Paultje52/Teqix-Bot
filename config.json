@@ -1,5 +1,5 @@
 {
-  "token": "TOKEN",
+  "token": "NzEzNjg1MTE2MTY1MTYxMDYw.Xs5C0w.1uhkUTj3msHvrrFRzcW9JJQxkj8",
   "prefix": "!",
   "authorSettings": {
     "spelpunten": 0,
@@ -33,7 +33,8 @@
     "modlogs": "🗂➤mod_logs",
     "ticket": "developer",
     "review": "reviews",
-    "join-leave": "join-leave"
+    "join-leave": "join-leave",
+    "attachmentSpamChannel": "boterror-logs"
   },
   "roles": {
     "support": "Support Team",
