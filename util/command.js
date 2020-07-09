@@ -20,6 +20,7 @@ module.exports = class Command {
 	) {
 		this.client = client;
 		let category = dir.split("\\");
+		if (dir.includes("/")) category = dir.split("/"); // Unix-based systems
 		category = category.pop();
 		if (!permissions.bot) permissions.bot = [];
 		if (!permissions.user) permissions.user = [];
