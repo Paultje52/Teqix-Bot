@@ -7,6 +7,18 @@ module.exports = async (message) => {
 
   message = await global.client.message(message);
 
+  if (message.content.toLowerCase() === `${global.client.config.prefix}about`) {
+    // WAARSCHUWING
+    // Volgens de licentie moet er een manier zijn voor elke gebruiker om bij de sourcecode te komen.
+    // Het about command mag op geen enkele manier geblokkeert worden (Tenzei je dit op een alternatieve manier mededeelt, bijvoorbeeld in het help command). 
+    // In het about commando MOET een link naar de github repository staan.
+    // https://github.com/Paultje52/Teqix-Bot
+    return message.channel.send(message.embed()
+      .setTitle("Over deze bot")
+      .setDescription(`Deze bot is een fork van de Teqix Bot, die opensource op [github](https://github.com/Paultje52/Teqix-Bot) staat.`)
+    );
+  }
+
 
   // Command handler
   setTimeout(async () => { // Op andere thread runnen
