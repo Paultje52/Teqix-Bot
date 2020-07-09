@@ -46,7 +46,7 @@ module.exports = async function Message(message) {
   // Database gedoe voor de author
   if (!message.author.settings) {
     message.author.settings = await global.client.db.get(`author-${message.author.id}`);
-    if (!message.author.settings) message.author.settings = global.client.config.authorSettings;
+    if (!message.author.settings) message.author.settings = {...global.client.config.authorSettings};
   }
   message.author.updateDatabase = () => {
     return global.client.db.set(`author-${message.author.id}`, message.author.settings);
