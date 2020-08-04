@@ -7,6 +7,9 @@ messages.sqlite
 /birth/countdown.js
 /birth/birth.log
 
+# Repl.it settings
+.replit
+
 # Logs
 logs
 *.log
